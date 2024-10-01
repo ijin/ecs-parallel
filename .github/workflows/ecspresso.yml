@@ -4,7 +4,7 @@ on:
   push:
 
 jobs:
-  s3ls:
+  deploy:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -15,4 +15,4 @@ jobs:
           aws-region: 'ap-northeast-1'
           role-to-assume: ${{ vars.AWS_ROLE_NAME }}
 
-      - run: aws ecs describe-clusters
+      - run: aws ecs list-clusters
