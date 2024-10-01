@@ -1,0 +1,49 @@
+{
+  "containerDefinitions": [
+    {
+      "command": [
+        "/bin/sh",
+        "-c",
+        "touch alive; echo bye {{ env `TIME` `0` }} > index.html; python -m http.server 8080"
+      ],
+      "cpu": 0,
+      "essential": true,
+      "image": "277622433573.dkr.ecr.ap-northeast-1.amazonaws.com/test",
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-create-group": "true",
+          "awslogs-group": "/ecs/test",
+          "awslogs-region": "ap-northeast-1",
+          "awslogs-stream-prefix": "ecs",
+          "max-buffer-size": "25m",
+          "mode": "non-blocking"
+        }
+      },
+      "name": "test",
+      "portMappings": [
+        {
+          "appProtocol": "http",
+          "containerPort": 8080,
+          "hostPort": 8080,
+          "name": "container-http",
+          "protocol": "tcp"
+        }
+      ]
+    }
+  ],
+  "cpu": "256",
+  "executionRoleArn": "arn:aws:iam::277622433573:role/ecsTaskExecutionRole",
+  "family": "test",
+  "ipcMode": "",
+  "memory": "512",
+  "networkMode": "awsvpc",
+  "pidMode": "",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  }
+}
