@@ -16,7 +16,7 @@ jobs:
           role-to-assume: ${{ vars.AWS_ROLE_NAME }}
 
       - run: aws ecs list-clusters
-      - run: apt install parallel
+      - run: sudo apt -y install parallel
       - name: parallel
         run: |
           parallel --line-buffer --tagstring "" ::: \
