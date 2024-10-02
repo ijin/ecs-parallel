@@ -18,7 +18,10 @@ jobs:
       - run: aws ecs list-clusters
       - uses: actions/checkout@v4
       - run: sudo apt -y install parallel
-      - name: parallel
+      - uses: kayac/ecspresso@v2
+        with:
+          version: latest
+      - name: parallel ecspresso deploy
         run: |
           ls ecspresso*.yml | parallel --line-buffer --tagstring "[{#} {/.}]" \
           "ecspresso deploy --config {} | tee /tmp/{/.}.log"

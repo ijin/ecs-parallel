@@ -4,7 +4,7 @@
       "command": [
         "/bin/sh",
         "-c",
-        "touch alive; echo bye {{ env `TIME` `0` }} > index.html; python -m http.server 8080"
+        "touch alive; echo bye {{ env `TIME` `1` }} > index.html; python -m http.server 8080"
       ],
       "cpu": 0,
       "essential": true,
