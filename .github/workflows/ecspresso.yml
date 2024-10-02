@@ -24,6 +24,6 @@ jobs:
       - name: parallel ecspresso deploy
         run: |
           ls ecspresso*.yml | parallel --line-buffer --tagstring "[{#} {/.}]" \
-          "ecspresso deploy --config {} | tee /tmp/{/.}.log"
+          "TIME=$(date +%s) ecspresso deploy --config {} | tee /tmp/{/.}.log"
           cat /tmp/ecspresso*.log
 
