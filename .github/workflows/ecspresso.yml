@@ -16,10 +16,10 @@ jobs:
           role-to-assume: ${{ vars.AWS_ROLE_NAME }}
 
       - run: aws ecs list-clusters
+      - uses: actions/checkout@v4
       - run: sudo apt -y install parallel
       - name: parallel
         run: |
-          ls -alh
           ls ecspresso*.yml | parallel --line-buffer --tagstring "[{#} {/.}]" \
           "ecspresso deploy --config {} | tee /tmp/{/.}.log"
           cat /tmp/ecspresso*.log
