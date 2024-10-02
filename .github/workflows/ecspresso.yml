@@ -19,6 +19,7 @@ jobs:
       - run: sudo apt -y install parallel
       - name: parallel
         run: |
+          pwd ; ls
           ls ecspresso*.yml | parallel --line-buffer --tagstring "[{#} {/.}]" \
           "ecspresso deploy --config {} | tee /tmp/{/.}.log"
           cat /tmp/ecspresso*.log
