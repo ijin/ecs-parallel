@@ -19,8 +19,7 @@ jobs:
       - run: sudo apt -y install parallel
       - name: parallel
         run: |
-          parallel --line-buffer --tagstring "[{#}]" ::: \
-          "for i in {1..5}; do echo 0; sleep 1; done | tee /tmp/output0" \
-          "for i in {1..5}; do echo 1; sleep 1; done | tee /tmp/output1"; \
-          cat /tmp/output0 /tmp/output1
+          ls ecspresso*.yml | parallel --line-buffer --tagstring "[{#} {/.}]" \
+          "ecspresso deploy --config {} | tee /tmp/{/.}.log"
+          cat /tmp/ecspresso*.log
 
