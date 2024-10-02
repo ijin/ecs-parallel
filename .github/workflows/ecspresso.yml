@@ -22,9 +22,9 @@ jobs:
         with:
           version: latest
       - name: parallel ecspresso deploy
+        shell: bash -euo pipefail {0}
         run: |
-          ls ecspresso*.yml | parallel --line-buffer --tagstring "[{/.}]" \
-          "TIME=$(date +%s) ecspresso deploy --config {} | tee /tmp/{/.}.log"
+          ls ecspresso*.yml | parallel --line-buffer --tagstring "[{/.}]" --keep-order \
+          "TIME=$(date +%s) ecspresso deploy --config {} | tee /tmp/{/.}.log; echo \${PIPESTATUS[0]} > /tmp/{/.}.exit"
           for f in ecspresso*.yml; do printf "\n=== %s ===\n" "$f"; cat /tmp/${f%.yml}.log; done
-
-
+          exit $(cat /tmp/*.exit | sort -nr | head -n1)
