@@ -20,7 +20,7 @@
           "mode": "non-blocking"
         }
       },
-      "name": "test3",
+      "name": "test",
       "portMappings": [
         {
           "appProtocol": "http",
