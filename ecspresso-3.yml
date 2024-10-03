@@ -1,0 +1,6 @@
+region: ap-northeast-1
+cluster: test
+service: test2
+service_definition: ecs-service-def3.json
+task_definition: ecs-task-def3.json
+timeout: "10m0s"
