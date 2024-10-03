@@ -24,7 +24,7 @@ jobs:
       - name: parallel ecspresso deploy
         shell: bash -euo pipefail {0}
         run: |
-          ls ecspresso*.yml | parallel --line-buffer --tagstring "[{#}][{/.}]" \
+          ls ecspresso*.yml | parallel --delay 5 --line-buffer --tagstring "[{#}][{/.}]" \
           "TIME=$(date +%s) ecspresso deploy --config {} | tee /tmp/{/.}.log; echo \${PIPESTATUS[0]} > /tmp/{/.}.exit"
           for f in ecspresso*.yml; do printf "\n\n=== %s ===" "$f"; cat /tmp/${f%.yml}.log; done
           exit $(cat /tmp/*.exit | sort -nr | head -n1)
