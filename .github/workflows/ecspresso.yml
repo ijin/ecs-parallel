@@ -26,5 +26,5 @@ jobs:
         run: |
           ls ecspresso*.yml | parallel --delay 5 --line-buffer --tagstring "[{#}]" \
           "TIME=$(date +%s) ecspresso deploy --config {} 2>&1 | tee /tmp/{/.}.log; echo \${PIPESTATUS[0]} > /tmp/{/.}.exit"
-          for f in ecspresso*.yml; do echo; echo -e "|\n|\n=== $f ==="; cat /tmp/${f%.yml}.log; done
+          for f in ecspresso*.yml; do echo; echo -e " \n=== $f ==="; cat /tmp/${f%.yml}.log; done
           exit $(cat /tmp/*.exit | sort -nr | head -n1)
