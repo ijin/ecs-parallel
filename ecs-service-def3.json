@@ -8,6 +8,7 @@
   ],
   "deploymentConfiguration": {
     "alarms": {
+      "alarmnames": [],
       "enable": false,
       "rollback": false
     },
