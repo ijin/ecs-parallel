@@ -33,7 +33,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: [invoke-get-changelist]
+    needs: [invoke-get-changelist, dir]
     strategy:
       fail-fast: false
       max-parallel: 5
@@ -51,10 +51,11 @@ jobs:
       - uses: kayac/ecspresso@v2
         with:
           version: latest
-      - name: parallel ecspresso deploy
-        shell: bash -euo pipefail {0}
-        run: |
-          ls ecspresso*.yml | parallel --delay 5 --line-buffer --tagstring "[{#}]" \
-          "TIME=$(date +%s) ecspresso deploy --config {} 2>&1 | tee /tmp/{/.}.log; echo \${PIPESTATUS[0]} > /tmp/{/.}.exit"
-          for f in ecspresso*.yml; do echo; echo -e " \n=== $f ==="; cat /tmp/${f%.yml}.log; done
-          exit $(cat /tmp/*.exit | sort -nr | head -n1)
+      - run: echo hi
+#      - name: parallel ecspresso deploy
+#        shell: bash -euo pipefail {0}
+#        run: |
+#          ls ecspresso*.yml | parallel --delay 5 --line-buffer --tagstring "[{#}]" \
+#          "TIME=$(date +%s) ecspresso deploy --config {} 2>&1 | tee /tmp/{/.}.log; echo \${PIPESTATUS[0]} > /tmp/{/.}.exit"
+#          for f in ecspresso*.yml; do echo; echo -e " \n=== $f ==="; cat /tmp/${f%.yml}.log; done
+#          exit $(cat /tmp/*.exit | sort -nr | head -n1)
