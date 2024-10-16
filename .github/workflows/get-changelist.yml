@@ -1,0 +1,44 @@
+name: Common Module for get repository changelist
+on:
+  workflow_call:
+    inputs:
+      target-path:
+        required: true
+        type: string
+    outputs:
+      app-list:
+        value: ${{ jobs.get-changelist.outputs.app-list }}
+
+permissions:
+  pull-requests: read
+  contents: read
+
+jobs:
+  get-changelist:
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Filter changed files
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          list-files: csv
+          base: ${{ github.ref }}
+          filters: |
+            app:
+              - 'app/!(*.hcl|.*-version|global.env|*.md)/**'
+
+      - name: Get changed apps
+        id: get_changed_apps
+        if: steps.filter.outputs.app == 'true'
+        env:
+          TARGET_PATH: app/
+        shell: sh
+        run: |
+          echo ${{ steps.filter.outputs.app_files }} > ${RUNNER_TEMP}/app_files.csv
+          python .github/workflows/get_changed_apps.py ${RUNNER_TEMP}/app_files.csv
+
+    outputs:
+      app-list: ${{ steps.get_changed_apps.outputs.app-list }}

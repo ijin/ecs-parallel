@@ -2,13 +2,43 @@ name: ecspresso deploy
 
 on:
   push:
+paths:
+  - "app/**"
 
 jobs:
+  invoke-get-changelist:
+    uses: ./.github/workflows/get-changelist.yml
+    with:
+      target-path: app/
+    permissions:
+      pull-requests: read
+      contents: read
+
+  dir:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    needs: [invoke-get-changelist]
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        app: ${{ github.event.inputs.app-list && fromJson(github.event.inputs.app-list) || fromJson(needs.invoke-get-changelist.outputs.app-list) }}
+    steps:
+      - run: pwd
+
   deploy:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
+    needs: [invoke-get-changelist]
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        app: ${{ github.event.inputs.app-list && fromJson(github.event.inputs.app-list) || fromJson(needs.invoke-get-changelist.outputs.app-list) }}
     steps:
       - uses: aws-actions/configure-aws-credentials@v4
         with:
