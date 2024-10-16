@@ -30,7 +30,7 @@ jobs:
           echo "APP_LIST_JSON: $APP_LIST_JSON"
   
           YAML=$(
-            echo "$APP_LIST_JSON" | jq -r '.[]' | while read APP; do
+            echo "$APP_LIST_JSON" | jq -r '.[]."app-name"' | while read APP; do
               for FILE in app/"$APP"/ecspresso*.yml; do
                 [ -f "$FILE" ] && echo "{\"app\":\"$APP\",\"ecspresso_yml\":\"${FILE##*/}\"}"
               done
