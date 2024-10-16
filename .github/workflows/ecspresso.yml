@@ -30,7 +30,8 @@ jobs:
           APP_LIST_JSON: ${{ toJson(github.event.inputs.app-list && fromJson(github.event.inputs.app-list) || fromJson(needs.invoke-get-changelist.outputs.app-list)) }}
         run: |
           echo "APP_LIST_JSON: $APP_LIST_JSON"
-          YAML=$(echo "$APP_LIST_JSON" | jq -r '.[]' | xargs -I{} find app/{} -maxdepth 1 -name 'ecspresso*.yml' -type f | jq -R . | jq -sc .)
+          YAML=$(echo "$APP_LIST_JSON" | jq -r '.[]."app-name"' | xargs -I{} find app/{} -maxdepth 1 -name 'ecspresso*.yml' -type f)
+
           echo "yml=$YAML" >> $GITHUB_OUTPUT
 
   dir:
