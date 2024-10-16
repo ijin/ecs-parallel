@@ -2,8 +2,8 @@ name: ecspresso deploy
 
 on:
   push:
-paths:
-  - "app/**"
+    paths:
+      - "app/**"
 
 jobs:
   invoke-get-changelist:
