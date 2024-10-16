@@ -16,7 +16,7 @@ jobs:
 
   get-ecspresso-yml:
     runs-on: ubuntu-latest
-    needs: invoke-get-changelist]
+    needs: [invoke-get-changelist]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
