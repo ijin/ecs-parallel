@@ -14,6 +14,31 @@ jobs:
       pull-requests: read
       contents: read
 
+  get-ecspresso-yml:
+    runs-on: ubuntu-latest
+    needs: invoke-get-changelist]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+  
+      - name: get ecspresso config yaml files
+        id: get-ecspresso-yml
+        shell: bash
+        env:
+          APP_LIST_JSON: ${{ toJson(github.event.inputs.app-list && fromJson(github.event.inputs.app-list) || fromJson(needs.invoke-get-changelist.outputs.app-list)) }}
+        run: |
+          echo "APP_LIST_JSON: $APP_LIST_JSON"
+  
+          YAML=$(
+            echo "$APP_LIST_JSON" | jq -r '.[]' | while read APP; do
+              for FILE in app/"$APP"/ecspresso*.yml; do
+                [ -f "$FILE" ] && echo "{\"app\":\"$APP\",\"ecspresso_yml\":\"${FILE##*/}\"}"
+              done
+            done | jq -s '.'
+          )
+  
+          echo "yml=$YAML" >> $GITHUB_OUTPUT
+
   dir:
     runs-on: ubuntu-latest
     permissions:
@@ -33,12 +58,12 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: [invoke-get-changelist, dir]
+    needs: [invoke-get-changelist, dir, get-ecspresso-yml]
     strategy:
       fail-fast: false
       max-parallel: 5
       matrix:
-        app: ${{ github.event.inputs.app-list && fromJson(github.event.inputs.app-list) || fromJson(needs.invoke-get-changelist.outputs.app-list) }}
+        app: ${{ fromJson(needs.get-ecspresso-yml.outputs.yml) }}
     steps:
       - uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -51,7 +76,8 @@ jobs:
       - uses: kayac/ecspresso@v2
         with:
           version: latest
-      - run: echo hi
+      - run: |
+          ecspresso verify --config={{ matrix.ecspresso_file }} 
 #      - name: parallel ecspresso deploy
 #        shell: bash -euo pipefail {0}
 #        run: |
