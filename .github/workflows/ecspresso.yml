@@ -30,7 +30,8 @@ jobs:
           APP_LIST_JSON: ${{ toJson(github.event.inputs.app-list && fromJson(github.event.inputs.app-list) || fromJson(needs.invoke-get-changelist.outputs.app-list)) }}
         run: |
           echo "APP_LIST_JSON: $APP_LIST_JSON"
-          YAML=$(echo "$APP_LIST_JSON" | jq -r '.[]."app-name"' | xargs -I{} find "app/{}" -maxdepth 1 -name 'ecspresso*.yml' -type f 2>/dev/null | jq -R . | jq -sc .)
+          YAML=$(echo "$APP_LIST_JSON" | jq -r '.[] | if type == "object" then ."app-name" else . end' | xargs -I{} find "app/{}" -maxdepth 1 -name 'ecspresso*.yml' -type f 2>/dev/null)
+
           echo "yml=$YAML" >> $GITHUB_OUTPUT
 
   dir:
@@ -81,6 +82,6 @@ jobs:
 #        shell: bash -euo pipefail {0}
 #        run: |
 #          ls ecspresso*.yml | parallel --delay 5 --line-buffer --tagstring "[{#}]" \
-#          "TIME=$(date +%s) ecspresso deploy --config {} | tee /tmp/{/.}.log; echo \${PIPESTATUS[0]} > /tmp/{/.}.exit"
+#          "TIME=$(date +%s) ecspresso deploy --config {} 2>&1 | tee /tmp/{/.}.log; echo \${PIPESTATUS[0]} > /tmp/{/.}.exit"
 #          for f in ecspresso*.yml; do echo; echo -e " \n=== $f ==="; cat /tmp/${f%.yml}.log; done
 #          exit $(cat /tmp/*.exit | sort -nr | head -n1)
